@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { width: 100vw; height: 100vh; margin: 0; }
+        * { font-family: "Roboto", sans-serif; }
+        div.main { width: 100%; display: flex; justify-content: center; }
+        div.main_content {
+            width: 90%;
+            min-height: 90vh;
+            background-color: powderblue;
+            display: flex;
+            flex-direction: column;
+            align-self: center;
+            border-radius: 5px;
+        }
+        div.main_meteo {
+            width: 80%;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-self: center;
+            align-content: space-between;
+            gap: 20px 20px;
+        }
+        div.header {
+            align-self: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        div.main_meteo_info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 100%;
+            height: 10%;
+        }
+        div.main_meteo_el {
+            width: 44%;
+            min-width: 300px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-color: #85b2b8;
+        }
+        .meteogram {
+            min-height: 363px;
+            min-width: 297px;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: top;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main">
+    <div class="main_content">
+        <div class="header">
+            <div class="date_main">
+                <h2><div id="czas" style="text-align: center"></div></h2>
+            </div>
+        </div>
+        <div class="main_meteo">
+            <div class="main_meteo_info">
+                <h1>Wybierz datę</h1>
+                <input type="datetime-local" id="date_input">
+                <button id="submit_date">Zatwierdź</button>
+            </div>
+            <div class="main_meteo_el">
+                <p style="text-align: center;">Bierunsko-Ledzinski</p>
+                <img class="meteogram" id="meteo_b" alt="" onclick="wyswietlObrazek(this)">
+            </div>
+            <div class="main_meteo_el">
+                <p style="text-align: center;">Cieszyński i Bielski</p>
+                <img class="meteogram" id="meteo_c" alt="" onclick="wyswietlObrazek(this)">
+            </div>
+            <div class="main_meteo_el">
+                <p style="text-align: center;">Mikołowski</p>
+                <img class="meteogram" id="meteo_e" alt="" onclick="wyswietlObrazek(this)">
+            </div>
+            <div class="main_meteo_el">
+                <p style="text-align: center;">Wodzisławski</p>
+                <img class="meteogram" id="meteo_g" alt="" onclick="wyswietlObrazek(this)">
+            </div>
+            <div class="main_meteo_el">
+                <p style="text-align: center;">Żywiecki</p>
+                <img class="meteogram" id="meteo_h" alt="" onclick="wyswietlObrazek(this)">
+            </div>
+            <div class="main_meteo_el">
+                <p style="text-align: center;">Rybnicki</p>
+                <img class="meteogram" id="meteo_i" alt="" onclick="wyswietlObrazek(this)">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function pokazDateIGodzine() {
+        const teraz = new Date();
+        const formatowanaData = teraz.toLocaleDateString("pl-PL", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            weekday: "long"
+        });
+        const formatowanaGodzina = teraz.toLocaleTimeString("pl-PL", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+        document.getElementById("czas").textContent = `Dzisiejsza data: ${formatowanaData}, ${formatowanaGodzina}`;
+    }
+
+    function wyswietlObrazek(imgElement) {
+        const bgImage = window.getComputedStyle(imgElement).backgroundImage;
+        const imageUrl = bgImage.slice(5, -2); 
+
+        const overlay = document.createElement('div');
+        overlay.id = 'image-overlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        overlay.style.display = 'flex';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
+        overlay.style.zIndex = '1000';
+
+        const fullImg = document.createElement('img');
+        fullImg.src = imageUrl;
+        fullImg.style.maxWidth = '90%';
+        fullImg.style.maxHeight = '90%';
+        fullImg.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.5)';
+        fullImg.style.borderRadius = '8px';
+
+        overlay.appendChild(fullImg);
+
+        overlay.onclick = function () {
+            document.body.removeChild(overlay);
+        };
+
+        document.body.appendChild(overlay);
+    }
+
+    function aktualizacjaMeteogramowWybrana(dataWybrana) {
+        const data = [
+            dataWybrana.getFullYear(),
+            (dataWybrana.getMonth() + 1).toString().padStart(2, '0'),
+            dataWybrana.getDate().toString().padStart(2, '0'),
+        ];
+
+        const godzina = dataWybrana.getHours();
+        data[3] = godzina >= 18 ? '18' : godzina >= 12 ? '12' : godzina >= 6 ? '06' : '00';
+
+        return [
+            `https://old.meteo.pl/um/metco/mgram_pict.php?ntype=0u&fdate=${data.join('')}&row=465&col=217&lang=pl`,
+            `https://old.meteo.pl/um/metco/mgram_pict.php?ntype=0u&fdate=${data.join('')}&row=475&col=208&lang=pl`,
+            `https://old.meteo.pl/um/metco/mgram_pict.php?ntype=0u&fdate=${data.join('')}&row=463&col=213&lang=pl`,
+            `https://old.meteo.pl/um/metco/mgram_pict.php?ntype=0u&fdate=${data.join('')}&row=467&col=206&lang=pl`,
+            `https://old.meteo.pl/um/metco/mgram_pict.php?ntype=0u&fdate=${data.join('')}&row=476&col=219&lang=pl`,
+            `https://old.meteo.pl/um/metco/mgram_pict.php?ntype=0u&fdate=${data.join('')}&row=465&col=207&lang=pl`,
+        ];
+    }
+
+    function sprawdzObraz(imgElement, onErrorCallback) {
+        const img = new Image();
+        const bgImage = window.getComputedStyle(imgElement).backgroundImage;
+        const url = bgImage.slice(5, -2);
+        img.src = url;
+
+        img.onload = function () {
+            if (img.width < 11 || img.height < 11) {
+                onErrorCallback();
+            }
+        };
+
+        img.onerror = function () {
+            console.warn(`Obraz ${url} nie został załadowany.`);
+            onErrorCallback();
+        };
+    }
+
+    function aktualizacjaStylowMeteo(urlsMeteo, dataWybrana) {
+        const elements = [
+            "meteo_b",
+            "meteo_c",
+            "meteo_e",
+            "meteo_g",
+            "meteo_h",
+            "meteo_i",
+        ];
+
+        elements.forEach((id, index) => {
+            const element = document.getElementById(id);
+            element.style.backgroundImage = `url('${urlsMeteo[index]}')`;
+
+            sprawdzObraz(element, function () {
+                const nowaData = new Date(dataWybrana);
+                nowaData.setHours(nowaData.getHours() - 6);
+                //console.log(`Próba ponownej aktualizacji meteogramów dla daty: ${nowaData}`);
+
+                const noweUrls = aktualizacjaMeteogramowWybrana(nowaData);
+                aktualizacjaStylowMeteo(noweUrls, nowaData);
+            });
+        });
+    }
+
+    document.getElementById("submit_date").addEventListener("click", function () {
+        const dateInput = document.getElementById("date_input").value;
+
+        if (!dateInput) {
+            alert("Wybierz poprawną datę i godzinę.");
+            return;
+        }
+
+        const wybranaData = new Date(dateInput);
+
+        if (!isNaN(wybranaData)) {
+            const urlsMeteo = aktualizacjaMeteogramowWybrana(wybranaData);
+            aktualizacjaStylowMeteo(urlsMeteo, wybranaData);
+        } else {
+            alert("Nieprawidłowa data. Spróbuj ponownie.");
+        }
+    });
+
+    window.onload = function () {
+        pokazDateIGodzine();
+        setInterval(pokazDateIGodzine, 1000);
+
+        const aktualnaData = new Date();
+        const urlsMeteo = aktualizacjaMeteogramowWybrana(aktualnaData);
+        aktualizacjaStylowMeteo(urlsMeteo, aktualnaData);
+    };
+</script>
+
+</body>
+</html>
