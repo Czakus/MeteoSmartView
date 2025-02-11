@@ -182,31 +182,42 @@
         overlay.style.width = '100%';
         overlay.style.height = '100%';
         overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        overlay.style.zIndex = '1000';
         overlay.style.display = 'flex';
 	    overlay.style.flexDirection = 'row';
-	    overlay.style.gap = '0 20px';
         overlay.style.justifyContent = 'center';
         overlay.style.alignItems = 'center';
-        overlay.style.zIndex = '1000';
+
+        const images = document.createElement('div');
+        images.style.maxWidth= '90%';
+        images.style.maxHeight = '90%';
+        images.style.display = 'flex';
+	    images.style.flexDirection = 'row';
+        images.style.justifyContent = 'center';
+        images.style.alignItems = 'center';
+	    images.style.gap = '0 2%';        
 
         const fullImg = document.createElement('img');
         fullImg.src = imageUrl;
-        fullImg.style.Width = '90%';
-        fullImg.style.Height = '90%';
+        fullImg.style.maxWidth = '100%';
+        fullImg.style.maxHeight = '100%';
         fullImg.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.5)';
         fullImg.style.borderRadius = '8px';
+        fullImg.style.overflow = 'scroll';
 	
 	    const keyImg = document.createElement('img');
         keyImg.src = keyUrl;
-        keyImg.style.Width = '90%';
-        keyImg.style.Height = '90%';
+        keyImg.style.maxWidth = '100%';
+        keyImg.style.maxHeight = '100%';
         keyImg.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.5)';
         keyImg.style.borderRadius = '8px';
+        keyImg.style.overflow = 'scroll';
 
-	    overlay.appendChild(keyImg);
-        overlay.appendChild(fullImg);
+	    overlay.appendChild(images);
+        images.appendChild(keyImg);
+        images.appendChild(fullImg);
 
-        overlay.onclick = function () {
+        images.onclick = function () {
             document.body.removeChild(overlay);
         };
 
